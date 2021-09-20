@@ -1,0 +1,249 @@
+{
+	"info": {
+		"_postman_id": "0f293957-c379-45d1-82ad-ebb0fa61d84e",
+		"name": "TestTask HTTP API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Добавление пользователя",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Vasya\",\n    \"lastName\": \"Pupkin\",\n    \"age\": \"78\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4112/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "4112",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Добавление пользователя",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Petr\",\n    \"lastName\": \"Andreev\",\n    \"age\": \"9\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4112/api/user",
+							"host": [
+								"localhost"
+							],
+							"port": "4112",
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "Добавление пользователя",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Aglaya\",\n    \"lastName\": \"Fedorovna\",\n    \"age\": \"29\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4112/api/user",
+							"host": [
+								"localhost"
+							],
+							"port": "4112",
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "Добавление пользователя",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Galya\",\n    \"age\": \"19\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4112/api/user",
+							"host": [
+								"localhost"
+							],
+							"port": "4112",
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "Добавление пользователя",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Roma\",\n    \"age\": \"8\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4112/api/user",
+							"host": [
+								"localhost"
+							],
+							"port": "4112",
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "Добавление пользователя",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Alexandr\",\n    \"age\": \"113\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4112/api/user",
+							"host": [
+								"localhost"
+							],
+							"port": "4112",
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "Вывод всех пользователей",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4112/api/user",
+					"host": [
+						"localhost"
+					],
+					"port": "4112",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение пользователя по id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4112/api/user?id=",
+					"host": [
+						"localhost"
+					],
+					"port": "4112",
+					"path": [
+						"api",
+						"user"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
