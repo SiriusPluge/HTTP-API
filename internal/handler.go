@@ -77,7 +77,7 @@ func GetUserHandler(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
 
-	rows, err := db.Query("SELECT id FROM person")
+	rows, err := db.Query("SELECT $1 FROM person", id)
 	if err != nil {
 		log.Fatal(err)
 	}
