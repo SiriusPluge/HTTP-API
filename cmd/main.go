@@ -1,18 +1,21 @@
 package main
 
 import (
-	"HTTP-API-TestTask/internal"
+	"HTTP-API/internal"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"os"
+	"github.com/rs/cors"
 )
 
 func main() {
-	mux := http.NewServeMux()
-	server := internal.NewUserServer()
 
-	mux.HandleFunc("/api/user", server.UserHandler)
-	mux.HandleFunc("api/user?id=", server.UserHandler)
+	router := mux.NewRouter()
 
-	log.Fatal(http.ListenAndServe("localhost:"+os.Getenv("SERVERPORT"), mux))
+	router.HandleFunc("/api/user/{id}", internal.GetUserHandler).Methods("GET")
+	router.HandleFunc("/api/users", internal.GetAllUsersHandler).Methods("GET")
+	router.HandleFunc("/api/createUser", internal.CreateUserHandler).Methods("POST")
+
+	handler := cors.Default().Handler(router)
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }

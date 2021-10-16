@@ -1,38 +1,18 @@
 package internal
 
 import (
-	"HTTP-API-TestTask/pkg"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
+	"github.com/gorilla/mux"
 	"log"
 	"mime"
 	"net/http"
-	"time"
 )
 
-//Обработчик запросов
-func (s *Server) UserHandler(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/api/user" {
-		if req.Method == http.MethodPost {
-			s.CreateUserHandler(w, req)
-		} else if req.Method == http.MethodGet {
-			id := req.URL.Query().Get("id")
-			if len(id) > 0 {
-				s.GetUserHandler(w, req, id)
-			} else {
-				s.GetAllUsersHandler(w, req)
-			}
-		} else {
-			http.Error(w, fmt.Sprintf("expect method GET or POST at /api/user, got %v", req.Method), http.StatusMethodNotAllowed)
-			return
-		}
-	}
-}
-
-func (s *Server) CreateUserHandler(w http.ResponseWriter, req *http.Request) {
+func CreateUserHandler(w http.ResponseWriter, req *http.Request) {
 
 	log.Printf("handling task create at %s\n", req.URL.Path)
+
+	db := OpenConnection()
 
 	contentType := req.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
@@ -45,63 +25,75 @@ func (s *Server) CreateUserHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var jsonData User
-	jsonDataFromHttp, err := ioutil.ReadAll(req.Body)
-	if err != nil {
+	var jsonData Person
+	errSecond := json.NewDecoder(req.Body).Decode(&jsonData)
+	if errSecond != nil{
+		http.Error(w, errSecond.Error(), http.StatusBadRequest)
+	}
+
+	sqlStat := `INSERT INTO person (name, last_name, phone) VALUES ($1, $2, $3)`
+	_, err = db.Exec(sqlStat, jsonData.Name, jsonData.LastName, jsonData.Phone)
+	if err != nil{
+		w.WriteHeader(http.StatusBadRequest)
 		panic(err)
 	}
 
-	err = json.Unmarshal([]byte(jsonDataFromHttp), &jsonData)
-	if err != nil {
-		panic(err)
-	}
-
-	id := pkg.GenerateUUID()
-	time := time.Now().Unix()
-	data := s.CreateUser(id, jsonData.Name, jsonData.LastName, jsonData.Age, time)
-
-
-	js, err := json.Marshal(ResponseUserRequest{Error: err, Data: data[id]})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	w.WriteHeader(http.StatusOK)
+	defer db.Close()
 }
 
-func (s *Server) GetAllUsersHandler(w http.ResponseWriter, req *http.Request) {
+func GetAllUsersHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("handling task all users at %s\n", req.URL.Path)
 
-	type responceAllUsers struct {
-		Error error              `json:"error"`
-		Data  *map[string][]User `json:"data"`
+	db := OpenConnection()
+
+	rows, err := db.Query("SELECT * FROM person")
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	js, err := json.Marshal(responceAllUsers{Error: nil, Data: &s.Store.Users})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	var people []Person
+
+	for rows.Next() {
+		var person Person
+		rows.Scan(&person.Name, &person.LastName, &person.Phone)
+		people = append(people, person)
 	}
+
+	peopleBytes, _ := json.MarshalIndent(people, "", "\t")
+
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	w.Write(peopleBytes)
+
+	defer rows.Close()
+	defer db.Close()
 }
 
-func (s *Server) GetUserHandler(w http.ResponseWriter, req *http.Request, id string) {
+func GetUserHandler(w http.ResponseWriter, req *http.Request) {
 	log.Printf("handling get user at %s\n", req.URL.Path)
 
-	type responceUser struct {
-		Error error  `json:"error"`
-		Data  []User `json:"data"`
-	}
+	db := OpenConnection()
 
-	user := s.GetUser(id)
+	vars := mux.Vars(req)
+	id := vars["id"]
 
-	js, err := json.Marshal(responceUser{Error: nil, Data: user})
+	rows, err := db.Query("SELECT id FROM person")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		log.Fatal(err)
 	}
+
+	var people []Person
+
+	var person Person
+	rows.Scan(&person.Name, &person.LastName, &person.Phone)
+	people = append(people, person)
+
+
+	peopleBytes, _ := json.MarshalIndent(people, "", "\t")
+
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	w.Write(peopleBytes)
+
+	defer rows.Close()
+	defer db.Close()
 }
