@@ -14,11 +14,9 @@ services:
       dockerfile: Dockerfile
     restart: always
     links:
-      - postgres:postgres
+      - postgres
     environment:
       - DEBUG=true
     ports:
       - "8080:8080"
-    depends_on:
-      - postgres
     tty: true
