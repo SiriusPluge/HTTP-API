@@ -84,10 +84,11 @@ func GetUserHandler(w http.ResponseWriter, req *http.Request) {
 
 	var people []Person
 
-	var person Person
-	rows.Scan(&person.Name, &person.LastName, &person.Phone)
-	people = append(people, person)
-
+	for rows.Next() {
+		var person Person
+		rows.Scan(&person.Name, &person.LastName, &person.Phone)
+		people = append(people, person)
+	}
 
 	peopleBytes, _ := json.MarshalIndent(people, "", "\t")
 
