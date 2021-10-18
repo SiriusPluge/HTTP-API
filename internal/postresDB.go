@@ -12,7 +12,7 @@ func OpenConnection() *sql.DB{
 	password := "qwerty"
 	dbName := "postgres"
 	dbHost := "localhost"
-	dbPort := "5432"
+	dbPort := "5436"
 
 
 	dbUri := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, dbPort, username, dbName, password) //Создать строку подключения
