@@ -1,5 +1,9 @@
 # HTTP-API - сервис
 
+#Run for docker-compose:
+- sudo docker build -t server -f Dockerfile .
+- docker-compose up -d
+
 #Для запуска сервера - go run cmd/main.go
 
 В корневой папке имеется Postman Collections для проведения тестов.

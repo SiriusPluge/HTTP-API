@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "5436:5432"
+    restart: always
+  server:
+    container_name: server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    links:
+      - postgres:postgres
+    environment:
+      - DEBUG=true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    tty: true
