@@ -17,5 +17,13 @@ go run cmd/main.go
 
 #Request
 
-- curl
+1. Добавить нового пользователя - curl --location --request POST 'localhost:8080/api/createUser' \
+   --header 'Content-Type: application/json' \
+   --data-raw '{
+   "name": "Eremei",
+   "last_name": "Kravcov",
+   "phone": 33333
+   }'
+2. Получить список всех пользователей - curl --location --request GET 'localhost:8080/api/users'
+3. Удалить конкретного пользователя по id - curl --location --request GET 'localhost:8080/api/user/2'
 

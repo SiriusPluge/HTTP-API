@@ -31,7 +31,7 @@ func CreateUserHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, errSecond.Error(), http.StatusBadRequest)
 	}
 
-	sqlStat := `INSERT INTO person (name, last_name, phone) VALUES ($1, $2, $3)`
+	sqlStat := `INSERT INTO person (name, last_name, phone) VALUES ($1, $2, $3) returning id`
 	_, err = db.Exec(sqlStat, jsonData.Name, jsonData.LastName, jsonData.Phone)
 	if err != nil{
 		w.WriteHeader(http.StatusBadRequest)
@@ -47,20 +47,39 @@ func GetAllUsersHandler(w http.ResponseWriter, req *http.Request) {
 
 	db := OpenConnection()
 
-	rows, err := db.Query("SELECT * FROM person")
+	rows, err := db.Query("select * from person")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
+	defer rows.Close()
 
-	var people []Person
 
+	type ManyUsers []Person
+
+	var manyUsers ManyUsers
 	for rows.Next() {
-		var person Person
-		rows.Scan(&person.Name, &person.LastName, &person.Phone)
-		people = append(people, person)
+		var user Person
+		err = rows.Scan(&user.Id, &user.Name, &user.LastName, &user.Phone)
+		if err != nil {
+			log.Fatal("Error in Scan rows!")
+		}
+		manyUsers = append(manyUsers, user)
 	}
 
-	peopleBytes, _ := json.MarshalIndent(people, "", "\t")
+
+	//users := []Person
+	//
+	//for rows.Next(){
+	//	u := users[]
+	//	err := rows.Scan(&u.id, &u.Name, &u.LastName, &u.Phone)
+	//	if err != nil{
+	//		fmt.Println(err)
+	//		continue
+	//	}
+	//	users = append(users, u)
+	//}
+	//
+	peopleBytes, _ := json.MarshalIndent(manyUsers, "", "\t")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(peopleBytes)
@@ -77,20 +96,31 @@ func GetUserHandler(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
 
-	rows, err := db.Query("SELECT $1 FROM person", id)
+	rows, err := db.Query("select * from person where id = $1", id)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var people []Person
+	type ManyUsers []Person
 
+	var manyUsers ManyUsers
 	for rows.Next() {
-		var person Person
-		rows.Scan(&person.Name, &person.LastName, &person.Phone)
-		people = append(people, person)
+		var user Person
+		err = rows.Scan(&user.Id, &user.Name, &user.LastName, &user.Phone)
+		if err != nil {
+			log.Fatal("Error in Scan rows!")
+		}
+		manyUsers = append(manyUsers, user)
 	}
 
-	peopleBytes, _ := json.MarshalIndent(people, "", "\t")
+	//var people []Person
+	//
+	//var person Person
+	//rows.Scan(&person.Name, &person.LastName, &person.Phone)
+	//people = append(people, person)
+
+
+	peopleBytes, _ := json.MarshalIndent(manyUsers, "", "\t")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(peopleBytes)
